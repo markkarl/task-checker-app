@@ -1,6 +1,9 @@
-// frontend/src/context/AuthContext.js
-import React, { createContext, useState } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import { io } from 'socket.io-client';
+
+// Ensure the import statements are at the top
+const socket = io('http://localhost:5000');
 
 const AuthContext = createContext();
 
@@ -16,31 +19,26 @@ const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  useEffect(() => {
+    socket.on('connect', () => {
+      console.log('connected to socket server');
+    });
+
+    socket.on('disconnect', () => {
+      console.log('disconnected from socket server');
+    });
+
+    return () => {
+      socket.off('connect');
+      socket.off('disconnect');
+    };
+  }, []);
+
   return (
     <AuthContext.Provider value={{ user, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
 };
-// frontend/src/context/AuthContext.js
-import { io } from 'socket.io-client';
-
-const socket = io('http://localhost:5000');
-
-// In AuthProvider:
-useEffect(() => {
-  socket.on('connect', () => {
-    console.log('connected to socket server');
-  });
-
-  socket.on('disconnect', () => {
-    console.log('disconnected from socket server');
-  });
-
-  return () => {
-    socket.off('connect');
-    socket.off('disconnect');
-  };
-}, []);
 
 export { AuthProvider, AuthContext };

@@ -1,19 +1,18 @@
-// frontend/src/pages/Login.js
 import React, { useContext, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { TextField, Button, Container } from '@mui/material';
 
 const Login = () => {
   const { login } = useContext(AuthContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     await login(email, password);
-    history.push('/');
+    navigate('/');
   };
 
   return (
